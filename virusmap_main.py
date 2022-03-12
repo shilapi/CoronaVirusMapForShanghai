@@ -1,6 +1,20 @@
 import os.path
 import re
 import xlwings as xw
+import numpy as np
+
+def findKeyWord(keyString,regex) :
+    final = []
+    for keyString in virusPlaceTmp:
+        try:
+            matchRule = re.compile(regex)
+            found = matchRule.findall(keyString)
+            print(found)
+            final.append(found)
+        except AttributeError:
+            pass
+    print(final)
+    return final
 
 if os.path.isfile('virusPlace.xlsx'):
     exl_main = xw.Book('virusPlace.xlsx')
@@ -29,17 +43,14 @@ while True:
 print(virusPlaceListInput)
 virusPlaceTmp = [s for s in virusPlaceListInput if "居住" in s]
 print(virusPlaceTmp)
-for keyWdOut in virusPlaceTmp :
-    try:
-        found = re.compile('居住地为(.+?)，|居住于(.+?)，').findall(keyWdOut)
-        print(found)
-        virusPlaceList.append(found)
-    except AttributeError:
-        pass
-print(virusPlaceList)
 
-virusPlaceListout = [x for j in virusPlaceList for x in j]
-sheet1.range(placeStart).options(transpose=True).value = virusPlaceListout
+#'(居住地为(.+?)，)|(居住于(.+?)，)'
+virusPlaceList.append(findKeyWord(virusPlaceTmp,'居住地为(.+?)，'))
+virusPlaceList.append(findKeyWord(virusPlaceTmp,'居住于(.+?)，'))
+
+virusPlaceListOut = np.unique(sum(sum(virusPlaceList,[]),[]))
+print('outputStart'+str(virusPlaceListOut))
+sheet1.range(placeStart).options(transpose=True).value = virusPlaceListOut
 
 #save stage
 exl_main.save('virusPlace.xlsx')
