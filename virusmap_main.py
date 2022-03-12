@@ -3,6 +3,7 @@ import re
 import time
 import xlwings as xw
 import numpy as np
+import GaodeLocationGet
 
 #关键词查找&提取到列表
 def findKeyWord(keyString,regex) :
@@ -55,8 +56,6 @@ print(virusPlaceTmp)
 #'(居住地为(.+?)，)|(居住于(.+?)，)'
 virusPlaceList.append(findKeyWord(virusPlaceTmp,'居住地为(.+?)，'))
 virusPlaceList.append(findKeyWord(virusPlaceTmp,'居住于(.+?)，'))
-virusPlaceList.append(findKeyWord(virusPlaceTmp,'居住地为(.+?)。'))
-virusPlaceList.append(findKeyWord(virusPlaceTmp,'居住于(.+?)。'))
 
 #写入地址
 virusPlaceListOut = np.unique(sum(sum(virusPlaceList,[]),[]))
@@ -72,7 +71,7 @@ for address in virusPlaceListOut:
     viruslocationList.append(locationChache)
     time.sleep(0.05) #防止服务器拒绝访问
 print('outputStart'+str(viruslocationList))
-sheet1.range('b'+placeStart).value = viruslocationList
+sheet1.range('b'+placeStart).options(transpose=True).value = viruslocationList
 
 #save&close session
 exl_main.save('virusPlace.xlsx')

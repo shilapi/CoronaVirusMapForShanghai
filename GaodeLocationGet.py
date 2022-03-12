@@ -10,7 +10,7 @@ def location(address,key):
     try:
         item = locationElement[0]
         dataComplex = str(item.firstChild.data)
-        dataFinal = dataComplex.split(',',1)
+        dataFinal = dataComplex#.split(',',1)
         return dataFinal
     except IndexError:
         print('errorhere'+httpText)
