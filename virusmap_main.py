@@ -46,7 +46,7 @@ def mainProgess(virusPlaceListInput):
     placeStart = '2'
     exl_main = xw.Book()
     sheet1 = exl_main.sheets['sheet1']
-    sheet1.range('a1').options(transpose=True).value = ['地址', '经纬度']  # 增加表头
+    sheet1.range('a1').value = ['地址', '经纬度']  # 增加表头
 
     virusPlaceList = []
     print('input Here')
@@ -73,7 +73,7 @@ def mainProgess(virusPlaceListInput):
         viruslocationList.append(locationChache)
         time.sleep(0.01)  # 防止服务器拒绝访问
     print('outputStart' + str(viruslocationList))
-    sheet1.range('b' + placeStart).value = viruslocationList
+    sheet1.range('b' + placeStart).options(transpose=True).value = viruslocationList
 
     # save&close session
     exl_main.save('virusPlace'+time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime())+'.xlsx')
