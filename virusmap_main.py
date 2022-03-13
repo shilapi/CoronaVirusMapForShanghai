@@ -1,3 +1,4 @@
+import datetime
 import os.path
 import re
 import time
@@ -5,14 +6,15 @@ import xlwings as xw
 import numpy as np
 import GaodeLocationGet
 
-#关键词查找&提取到列表
+
+# 关键词查找&提取到列表
 def findKeyWord(sourceString,regex) :
     final = []
     for sourceStringClip in sourceString:
         try:
             matchRule = re.compile(regex)
             found = matchRule.findall(sourceStringClip)
-            print(found)
+            #print(found)
             if found != [] :
                 final.append(found)
         except AttributeError:
@@ -20,9 +22,10 @@ def findKeyWord(sourceString,regex) :
     print(final)
     return final
 
+
 def mainProgess(virusPlaceListInput):
-    # 建立excel文件或打开文件
     '''
+    # 建立excel文件或打开文件
     if os.path.isfile('virusPlace.xlsx'):
         exl_main = xw.Book('virusPlace.xlsx')
         sheet1 = exl_main.sheets['sheet1']
@@ -39,10 +42,11 @@ def mainProgess(virusPlaceListInput):
         placeStart = str(i)
     else:
     '''
-    # 从头编辑
-    placeStart = '1'
+    # 从表格头部编辑
+    placeStart = '2'
     exl_main = xw.Book()
     sheet1 = exl_main.sheets['sheet1']
+    sheet1.range('a1').options(transpose=True).value = ['地址', '经纬度']  # 增加表头
 
     virusPlaceList = []
     print('input Here')
@@ -63,19 +67,20 @@ def mainProgess(virusPlaceListInput):
     # 查找经纬度并写入
     viruslocationList = []
     for address in virusPlaceListOut:
-        locationChache = GaodeLocationGet.location(address, '4050c5266eaba083b4dda056ae8d3633')
+        locationChache = GaodeLocationGet.location(address, '4050c5266eaba083b4dda056ae8d3633')  # Token为个人token，请勿滥用
         if locationChache == None:
             locationChache = ['', '']
         viruslocationList.append(locationChache)
-        time.sleep(0.05)  # 防止服务器拒绝访问
+        time.sleep(0.01)  # 防止服务器拒绝访问
     print('outputStart' + str(viruslocationList))
-    sheet1.range('b' + placeStart).options(transpose=True).value = viruslocationList
+    sheet1.range('b' + placeStart).value = viruslocationList
 
     # save&close session
-    exl_main.save('virusPlace.xlsx')
+    exl_main.save('virusPlace'+time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime())+'.xlsx')
     exl_main.close()
 
-if __name__ == '__main__' :
+
+if __name__ == '__main__':
     virusPlaceListInput = []
     #通报输入
     while True:
