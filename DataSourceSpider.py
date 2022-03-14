@@ -18,8 +18,10 @@ def contentGet(url):
     contentRaw = requests.get(url,headers=spiderHeaders)
     contentRaw = contentRaw.text.split('\n')
     # print(contentRaw)
-    contentFiltered = virusmap_main.findKeyWord(contentRaw, '<li><a href="(.+?)" title="上海\d+年\d+月\d+日')  # 筛选新闻
-    contentFiltered = sum(contentFiltered, [])
+    contentFilteredRaw = virusmap_main.findKeyWord(contentRaw, '<li><a href="(.+?)" title="上海\d+年\d+月\d+日')  # 筛选新闻
+    contentFilteredRaw.extend(virusmap_main.findKeyWord(contentRaw, '<li><a href="(.+?)" title="上海新增\d+例本土确诊病例和\d+例本土无症状感染者'))
+    contentFiltered = sum(contentFilteredRaw, [])
+    print(contentFiltered)
     for i, j in enumerate(contentFiltered):
         contentFiltered[i] = 'http://wsjkw.sh.gov.cn' + contentFiltered[i]  # 补全为链接
     return contentFiltered
